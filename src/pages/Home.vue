@@ -1,37 +1,46 @@
 <template>
-    <div>
-        <h1>Home</h1>
+  <Loader v-if="showLoader"/>
+  <div class="container lg:px-32">
+    <div class="text-4xl uppercase font-semibold flex items-center my-8 border-b-2 border-slate-300 pb-4">
+      <svg class="w-10 h-10 text-red-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M8.597 3.2A1 1 0 0 0 7.04 4.289a3.49 3.49 0 0 1 .057 1.795 3.448 3.448 0 0 1-.84 1.575.999.999 0 0 0-.077.094c-.596.817-3.96 5.6-.941 10.762l.03.049a7.73 7.73 0 0 0 2.917 2.602 7.617 7.617 0 0 0 3.772.829 8.06 8.06 0 0 0 3.986-.975 8.185 8.185 0 0 0 3.04-2.864c1.301-2.2 1.184-4.556.588-6.441-.583-1.848-1.68-3.414-2.607-4.102a1 1 0 0 0-1.594.757c-.067 1.431-.363 2.551-.794 3.431-.222-2.407-1.127-4.196-2.224-5.524-1.147-1.39-2.564-2.3-3.323-2.788a8.487 8.487 0 0 1-.432-.287Z"/>
+      </svg>
+      <h1 class="lg:text-5xl text-3xl font-extrabold text-slate-700">Rury Comics<small class="ms-2 font-semibold text-gray-500 italic">Truyện mới nhất</small></h1>
     </div>
+    <ListComics :list="movies" />
+  </div>
 </template>
 
 <script setup>
-import axios from 'axios';
+document.title = "Rury Comics | Home";
+// imports
+import axios              from "axios";
+import { ref, onMounted } from "vue";
+import { defineProps }    from "vue";
+import ListComics         from "../components/ListComics.vue";
+import Loader             from "../components/Loader.vue";
 
-const options = {
-  method: 'GET',
-  url: 'https://anime-db.p.rapidapi.com/anime',
-  params: {
-    page: '1',
-    size: '10',
-    search: 'Fullmetal',
-    genres: 'Fantasy,Drama',
-    sortBy: 'ranking',
-    sortOrder: 'asc'
-  },
-  headers: {
-    'x-rapidapi-key': '1109e57f88msh8b9cfe8ef5ca2cep1ae5c1jsn2d9d0e28fcf4',
-    'x-rapidapi-host': 'anime-db.p.rapidapi.com'
+//API
+const HOME_API      =     import.meta.env.VITE_HOME_API;
+const IMAGE_API     =     import.meta.env.VITE_IMAGE_API;
+
+// props
+const pages         =     ref(1);
+const movies        =     ref([]);
+const showLoader    =     ref(null);
+onMounted(async () => {
+  try {
+    showLoader.value  =     true;
+    const response    =     await axios.get(HOME_API);
+    showLoader.value  =     false;
+    movies.value      =     response.data.data.items;
+
+    
+    console.log(response.data);
+  } catch (error) {
+    console.error("Error fetching data:", error);
   }
-};
-
-try {
-	const response = await axios.request(options);
-	console.log(response.data);
-} catch (error) {
-	console.error(error);
-}
+});
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

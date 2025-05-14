@@ -4,17 +4,17 @@
       <div
         class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4"
       >
-        <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
+        <router-link to="/" class="flex items-center space-x-3 rtl:space-x-reverse">
           <img
-            src="https://flowbite.com/docs/images/logo.svg"
+            src="/img/logo.png"
             class="h-8"
-            alt="Flowbite Logo"
+            alt="Rury Movies Logo"
           />
           <span
             class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-            >Rury Movies</span
+            >Rury Comics</span
           >
-        </a>
+        </router-link>
         <button
           data-collapse-toggle="navbar-multi-level"
           type="button"
@@ -48,7 +48,7 @@
                 href="#"
                 class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
                 aria-current="page"
-                >Home</a
+                >Trang chủ</a
               >
             </li>
             <li>
@@ -57,7 +57,7 @@
                 data-dropdown-toggle="dropdownNavbar"
                 class="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
               >
-                Categories
+                Thể loại
                 <svg
                   class="w-2.5 h-2.5 ms-2.5"
                   aria-hidden="true"
@@ -77,25 +77,21 @@
               <!-- Dropdown menu -->
               <div
                 id="dropdownNavbar"
-                class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600"
+                class="lg:px-12 lg:w-full lg:max-h-none w-14/15 z-10 max-h-72 overflow-y-auto
+                hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600"
               >
                 <ul
-                  class="py-2 text-sm text-gray-700 dark:text-gray-200"
+                  class="flex flex-wrap py-2 text-sm text-gray-700 dark:text-gray-200"
                   aria-labelledby="dropdownLargeButton"
                 >
-                  <li>
-                    <a
-                      href="#"
-                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      >Actions</a
+                  <li v-for="category in categories" :key="category.id" 
+                  class="flex justify-center lg:w-1/8 w-1/3">
+                    <router-link
+                      :to="`/categories/${category.slug}`"
+                      class="block w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                     >
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      >Travel</a
-                    >
+                      {{ category.name }}
+                    </router-link>
                   </li>
                 </ul>
                 <div class="py-1">
@@ -108,10 +104,10 @@
               </div>
             </li>
             <li>
-              <a
-                href="#"
-                class="flex justify-center items-center text-md py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                >Saved
+              <router-link
+                to="/saved"
+                class="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
+                >Đã lưu
                 <svg
                   class="w-6 h-6 "
                   aria-hidden="true"
@@ -125,7 +121,7 @@
                     d="M7.833 2c-.507 0-.98.216-1.318.576A1.92 1.92 0 0 0 6 3.89V21a1 1 0 0 0 1.625.78L12 18.28l4.375 3.5A1 1 0 0 0 18 21V3.889c0-.481-.178-.954-.515-1.313A1.808 1.808 0 0 0 16.167 2H7.833Z"
                   />
                 </svg>
-              </a>
+              </router-link>
             </li>
           </ul>
         </div>
@@ -136,13 +132,22 @@
 </template>
 
 <script setup>
-import { onMounted, nextTick, watch } from "vue";
+import axios from "axios";
+import { onMounted, nextTick, watch, ref } from "vue";
 import { initFlowbite } from "flowbite";
+const categories = ref([]);
+const LIST_API = import.meta.env.VITE_LIST_API;
+const CATEGORIES_API = import.meta.env.VITE_CATEGORIES_API;
+onMounted(async () => {
+  try {
+    const response = await axios.get(CATEGORIES_API);
+    categories.value = response.data.data.items;
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+  }
 
-onMounted(() => {
-  nextTick(() => {
-    initFlowbite();
-  });
+  await nextTick();
+  initFlowbite();
 });
 
 </script>

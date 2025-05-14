@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../pages/Home.vue';
-import Movie from '../pages/Movie.vue';
+import Category from '../pages/Category.vue';
 import MainLayout from '../layouts/MainLayout.vue';
 const routes = [
   {
@@ -12,14 +12,14 @@ const routes = [
     ]
   },
   {
-    path: '/movie',
-    name: 'Movie',
+    path: '/categories',
+    name: 'Categories',
     component: MainLayout,
     children: [
         {
             path: ':slug',
-            name: 'DynamicMovie',
-            component: Movie, // Lazy-loaded
+            name: 'DynamicCategory',
+            component: Category, // Lazy-loaded
         }
     ]
   },
