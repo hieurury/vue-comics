@@ -136,13 +136,13 @@
         <div class="mb-6 md:mb-0">
           <a href="https://flowbite.com/" class="flex items-center">
             <img
-              src="https://flowbite.com/docs/images/logo.svg"
+              src="/img/logo.png"
               class="h-8 me-3"
               alt="FlowBite Logo"
             />
             <span
               class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-              >Flowbite</span
+              >Rury Comics</span
             >
           </a>
         </div>
@@ -151,7 +151,7 @@
             <h2
               class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white"
             >
-              Resources
+              Công nghệ
             </h2>
             <ul class="text-gray-500 dark:text-gray-400 font-medium">
               <li class="mb-4">
@@ -170,7 +170,7 @@
             <h2
               class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white"
             >
-              Follow us
+              Liên hệ
             </h2>
             <ul class="text-gray-500 dark:text-gray-400 font-medium">
               <li class="mb-4">
@@ -191,14 +191,14 @@
             <h2
               class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white"
             >
-              Legal
+              Khác
             </h2>
             <ul class="text-gray-500 dark:text-gray-400 font-medium">
               <li class="mb-4">
-                <a href="#" class="hover:underline">Privacy Policy</a>
+                <a href="#" class="hover:underline">Rury Movies</a>
               </li>
               <li>
-                <a href="#" class="hover:underline">Terms &amp; Conditions</a>
+                <a href="#" class="hover:underline">Rury Community</a>
               </li>
             </ul>
           </div>
@@ -209,9 +209,9 @@
       />
       <div class="sm:flex sm:items-center sm:justify-between">
         <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400"
-          >© 2023
-          <a href="https://flowbite.com/" class="hover:underline">Flowbite™</a>.
-          All Rights Reserved.
+          >© 2025
+          <a href="https://flowbite.com/" class="hover:underline">Rury Technology</a>.
+          developed by hieurury
         </span>
         <div class="flex mt-4 sm:justify-center sm:mt-0">
           <a
