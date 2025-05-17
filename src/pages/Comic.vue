@@ -7,14 +7,37 @@
             </svg>
             <h1 class="lg:text-5xl text-3xl font-extrabold text-slate-700">Comic<small class="ms-2 font-semibold text-gray-500 italic">{{ comicData.name }}</small></h1>
         </div>
-        <div>
-            <img class="w-58 h-78 object-cover" :src="`${IMAGE_API}/${comicData.thumb_url}`" alt="">
+        <!-- content -->
+        <div class="flex lg:flex-row flex-col lg:items-end items-center">
+            <img class="w-58 h-78 object-cover border-4 rounded-md shadow-md
+                    dark:border-slate-300 border-slate-950" 
+                :src="`${IMAGE_API}/${comicData.thumb_url}`" alt="">
+            <div class="px-4 w-full">
+                <h1 class="dark:text-white text-black lg:text-3xl text-2xl font-semibold my-2">{{ comicData.name }}</h1>
+                <p 
+                    v-html="comicData.content" 
+                    class="mb-3 *:text-md text-gray-500 md:text-xl dark:text-gray-400">
+                </p>
+                <ul class="flex flex-wrap">
+                    <li class="dark:text-slate-800 text-slate-50 lg:text-lg text-md font-semibold italic
+                            dark:bg-slate-50 bg-slate-950 rounded-lg px-2 py-1 mx-1 my-1"
+                        v-for="category in comicData.category" :key="category.id">
+                        <router-link :to="`/categories/${category.slug}`">{{ category.name }}</router-link>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <h3 class="text-3xl font-bold dark:text-white">Mô tả:</h3>
-        <div class="flex items-center">
-            <p class="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">
-                {{ comicData.content }}
-            </p>
+        <h3 class="text-3xl font-bold my-2 text-slate-800 dark:text-white">Thông tin:</h3>
+        <div class="flex items-center ">
+            <h3 class="dark:text-white text-slate-700 font-semibold text-xl">Tác giả:
+                <span class="italic text-md font-normal" v-if="comicData.author && comicData.author[0]" v-for="author in comicData.author" :key="author.id">
+                    {{ author }}
+                </span>
+                <span class="italic text-md font-normal" v-else>
+                    Hổng biết nữa!
+                </span>
+                
+            </h3>
         </div>
     </div>
 </template>
@@ -32,6 +55,7 @@ import axios                from    'axios';
 //API
 const IMAGE_API             =       import.meta.env.VITE_IMAGE_API;
 const COMIC_API             =       import.meta.env.VITE_COMIC_API;
+const LIST_API              =       import.meta.env.VITE_LIST_API;
 
 const comicData             =       ref({});
 const slugcomic             =       ref("");
