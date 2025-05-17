@@ -343,7 +343,7 @@ const   CATEGORIES_API    =     import.meta.env.VITE_CATEGORIES_API;
 //Properties 
 const   categories        =     ref([]);
 const   isDarkMode        =     ref(true);
-
+//funtions
 const toggleTheme         =     () => {
   isDarkMode.value        =     !isDarkMode.value;
   console.log(isDarkMode.value);
@@ -356,8 +356,15 @@ const applyTheme          =     () => {
     document.documentElement.classList.remove('dark');
   }
 };
+const systemTheme         =     window.matchMedia("(prefers-color-scheme: dark)").matches;
+if(systemTheme) {
+  isDarkMode.value        =     false;
+} else {
+  isDarkMode.value        =     false;
+}
+console.log(systemTheme);
 
-// Use watchEffect to respond to changes in isDarkMode
+//dynamic theme
 watch(isDarkMode, () => {
   applyTheme();
 });

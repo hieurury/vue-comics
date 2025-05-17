@@ -1,5 +1,5 @@
 <template>
-  <Loader v-show="showLoader"/>
+  <Loader v-if="showLoader"/>
   <div class="container lg:px-32 dark:bg-slate-950">
     <div class="text-4xl uppercase font-semibold flex items-center mb-8 py-14 border-b-2 border-slate-300 pb-4">
       <svg class="w-10 h-10 text-red-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -48,6 +48,7 @@ const newComics             =     ref([]);
 const onGoingComics         =     ref([]);
 const completedComics       =     ref([]);
 const showLoader            =     ref(null);
+
 onMounted(async () => {
   try {
     showLoader.value        =     true;
@@ -58,11 +59,6 @@ onMounted(async () => {
     newComics.value         =     newComicsRs.data.data.items;
     onGoingComics.value     =     onGoingComicsRs.data.data.items;
     completedComics.value   =     completedComicsRs.data.data.items;
-
-    
-    console.log(newComics.value);
-    console.log(onGoingComics.value);
-    console.log(completedComics.value);
   } catch (error) {
     console.error("Error fetching data:", error);
   }

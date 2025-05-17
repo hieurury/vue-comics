@@ -8,7 +8,7 @@
             <h1 class="lg:text-5xl text-3xl font-extrabold text-slate-700">Comic<small class="ms-2 font-semibold text-gray-500 italic">{{ comicData.name }}</small></h1>
         </div>
         <div>
-            <img :src="`${IMAGE_API}/${comicData.thumb_url}`" alt="">
+            <img class="w-58 h-78 object-cover" :src="`${IMAGE_API}/${comicData.thumb_url}`" alt="">
         </div>
         <h3 class="text-3xl font-bold dark:text-white">Mô tả:</h3>
         <div class="flex items-center">
