@@ -50,28 +50,33 @@
                 </span>
                 
             </h3>
+            <!-- server và chương -->
             <section class="my-4 py-2 border-t-2 border-slate-700 dark:border-slate-300">
+                <!-- danh sách server -->
                 <ul 
                     v-if="comicData.chapters && comicData.chapters.length > 0" 
                     class="flex font-semibold text-xl
                     ">
-                    <li class="bg-slate-800 dark:bg-slate-50 text-white dark:text-slate-950
-                    p-2 cursor-pointer"
+                    <li class="p-2 cursor-pointer m-1"
+                        :class="{'bg-slate-800 dark:bg-slate-50 text-white dark:text-slate-950' : currentServer !== serverChapters.server_name, 
+                                'bg-orange-900 text-white': currentServer == serverChapters.server_name}"
                         v-for="serverChapters in comicData.chapters"
                         @click="setCurrentChapters(serverChapters)" 
                         :key="serverChapters.server_name">
                         {{ serverChapters.server_name }}
                     </li>
                 </ul>
+                <!-- danh sách chương -->
                 <ul 
                     v-if="currentChapters && currentChapters.length > 0" 
                     class="flex font-semibold text-xl
-                    flex-wrap bg-slate-950 dark:bg-white max-h-80 overflow-y-scroll custom-bar">
-                    <li class="bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-white
-                    p-2 m-1 cursor-pointer flex-1/12 max-w-1/12"
+                    flex-wrap max-h-96 overflow-y-scroll custom-bar">                    <li class="bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-white
+                    p-2 m-1 cursor-pointer lg:flex-1/12 lg:max-w-1/12 flex-1/6 max-w-1/6 shadow-md"
                         v-for="chapter in currentChapters" 
                         :key="chapter.server_name">
-                        {{ chapter.chapter_name }}
+                        <router-link :to="`/comics/${slugcomic}/${getIdComic(chapter.chapter_api_data)}`" class="block w-full h-full">
+                            {{ chapter.chapter_name }}
+                        </router-link>
                     </li>
                 </ul>
             </section>
@@ -92,6 +97,7 @@ import axios                    from    'axios';
 const IMAGE_API                 =       import.meta.env.VITE_IMAGE_API;
 const COMIC_API                 =       import.meta.env.VITE_COMIC_API;
 const LIST_API                  =       import.meta.env.VITE_LIST_API;
+const READ_API                  =       import.meta.env.VITE_READ_API;
 
 const comicData                 =       ref({});
 const slugcomic                 =       ref("");
@@ -102,12 +108,24 @@ const statusComic               =       ref({
     "coming_soon": "Sắp ra mắt",
 });
 const currentChapters           =       ref([]);
+const currentServer             =       ref(null);
 
 //functions
 const setCurrentChapters        =       async (serverChapters) => {
     try {
         currentChapters.value   =       serverChapters.server_data;
-        console.log(currentChapters.value);
+        currentServer.value     =       serverChapters.server_name;
+        console.log(currentServer.value);   
+    } catch (error) {
+        console.error(error);
+    }
+}
+//get id from api
+const getIdComic                =        (apiChapter) => {
+    try {
+        const splitUrl = apiChapter.split("/");
+        const idComic = splitUrl[splitUrl.length - 1];
+        return idComic; 
     } catch (error) {
         console.error(error);
     }
@@ -120,7 +138,10 @@ onMounted(async () => {
         const comicRs       =       await axios.get(`${COMIC_API}/${slugcomic.value}`)
         comicData.value     =       comicRs.data.data.item;
         showLoader.value    =       false;
+        
         console.log(comicData.value);
+        //khi trang được tải xong -> đặt server 1 là mặc định.
+        setCurrentChapters(comicData.value.chapters[0]);
         document.title      =       ` Rury Comics | ${comicData.value.name}`;
     } catch (error) {
         console.error(error);
