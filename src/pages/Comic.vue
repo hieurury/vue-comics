@@ -14,9 +14,10 @@
                 :src="`${IMAGE_API}/${comicData.thumb_url}`" alt="">
             <div class="px-4 w-full">
                 <h1 class="dark:text-white text-black lg:text-3xl text-2xl font-semibold my-2">{{ comicData.name }}</h1>
-                <p 
+                <p
                     v-html="comicData.content" 
-                    class="mb-3 *:text-md text-gray-500 md:text-xl dark:text-gray-400">
+                    class="mb-3 *:text-md text-gray-500 md:text-xl dark:text-gray-400
+                        lg:max-h-52 overflow-y-scroll custom-bar">
                 </p>
                 <ul class="flex flex-wrap">
                     <li class="dark:text-slate-800 text-slate-50 lg:text-lg text-md font-semibold italic
@@ -28,7 +29,7 @@
             </div>
         </div>
         <h3 class="text-3xl font-bold my-2 text-slate-800 dark:text-white">Thông tin:</h3>
-        <div class="flex items-center ">
+        <div class="">
             <h3 class="dark:text-white text-slate-700 font-semibold text-xl">Tác giả:
                 <span class="italic text-md font-normal" v-if="comicData.author && comicData.author[0]" v-for="author in comicData.author" :key="author.id">
                     {{ author }}
@@ -38,28 +39,79 @@
                 </span>
                 
             </h3>
+            <h3 class="dark:text-white text-slate-700 font-semibold text-xl">Trạng thái:
+                <span class="italic text-md font-normal"
+                    :class="{
+                        'text-green-500': comicData.status === 'completed',
+                        'text-orange-500': comicData.status === 'ongoing',
+                        'text-blue-500': comicData.status === 'coming_soon',
+                    }">
+                    {{ statusComic[comicData.status] }}
+                </span>
+                
+            </h3>
+            <section class="my-4 py-2 border-t-2 border-slate-700 dark:border-slate-300">
+                <ul 
+                    v-if="comicData.chapters && comicData.chapters.length > 0" 
+                    class="flex font-semibold text-xl
+                    ">
+                    <li class="bg-slate-800 dark:bg-slate-50 text-white dark:text-slate-950
+                    p-2 cursor-pointer"
+                        v-for="serverChapters in comicData.chapters"
+                        @click="setCurrentChapters(serverChapters)" 
+                        :key="serverChapters.server_name">
+                        {{ serverChapters.server_name }}
+                    </li>
+                </ul>
+                <ul 
+                    v-if="currentChapters && currentChapters.length > 0" 
+                    class="flex font-semibold text-xl
+                    flex-wrap bg-slate-950 dark:bg-white max-h-80 overflow-y-scroll custom-bar">
+                    <li class="bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-white
+                    p-2 m-1 cursor-pointer flex-1/12 max-w-1/12"
+                        v-for="chapter in currentChapters" 
+                        :key="chapter.server_name">
+                        {{ chapter.chapter_name }}
+                    </li>
+                </ul>
+            </section>
         </div>
     </div>
 </template>
 
 <script setup>
-import { 
-        defineProps,
+import {
         ref,
         onMounted,  
-    }                       from    'vue';
-import { useRoute }         from    'vue-router';
-import Loader               from    '../components/Loader.vue';
-import axios                from    'axios';
+    }                           from    'vue';
+import { useRoute }             from    'vue-router';
+import Loader                   from    '../components/Loader.vue';
+import axios                    from    'axios';
 
 //API
-const IMAGE_API             =       import.meta.env.VITE_IMAGE_API;
-const COMIC_API             =       import.meta.env.VITE_COMIC_API;
-const LIST_API              =       import.meta.env.VITE_LIST_API;
+const IMAGE_API                 =       import.meta.env.VITE_IMAGE_API;
+const COMIC_API                 =       import.meta.env.VITE_COMIC_API;
+const LIST_API                  =       import.meta.env.VITE_LIST_API;
 
-const comicData             =       ref({});
-const slugcomic             =       ref("");
-const showLoader            =       ref(false);
+const comicData                 =       ref({});
+const slugcomic                 =       ref("");
+const showLoader                =       ref(false);
+const statusComic               =       ref({
+    "ongoing": "Đang tiến hành",
+    "completed": "Hoàn thành",
+    "coming_soon": "Sắp ra mắt",
+});
+const currentChapters           =       ref([]);
+
+//functions
+const setCurrentChapters        =       async (serverChapters) => {
+    try {
+        currentChapters.value   =       serverChapters.server_data;
+        console.log(currentChapters.value);
+    } catch (error) {
+        console.error(error);
+    }
+}
 
 onMounted(async () => {
     try {
@@ -68,9 +120,8 @@ onMounted(async () => {
         const comicRs       =       await axios.get(`${COMIC_API}/${slugcomic.value}`)
         comicData.value     =       comicRs.data.data.item;
         showLoader.value    =       false;
-
-        console.log(comicRs.data);
         console.log(comicData.value);
+        document.title      =       ` Rury Comics | ${comicData.value.name}`;
     } catch (error) {
         console.error(error);
     }
@@ -79,5 +130,14 @@ onMounted(async () => {
 </script>
 
 <style lang="css" scoped>
-
+    .custom-bar::-webkit-scrollbar {
+        width: 2px;
+    }
+    .custom-bar::-webkit-scrollbar-thumb {
+        background-color: #5b5959;
+        border-radius: 5px;
+    }
+    .custom-bar::-webkit-scrollbar-thumb:hover {
+        background-color: #5b5959;
+    }
 </style>
