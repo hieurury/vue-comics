@@ -110,12 +110,11 @@ const statusComic               =       ref({
 const currentChapters           =       ref([]);
 const currentServer             =       ref(null);
 
-//functions
+//setCurrentChapters handler
 const setCurrentChapters        =       async (serverChapters) => {
     try {
         currentChapters.value   =       serverChapters.server_data;
         currentServer.value     =       serverChapters.server_name;
-        console.log(currentServer.value);   
     } catch (error) {
         console.error(error);
     }
