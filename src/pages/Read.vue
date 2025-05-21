@@ -26,8 +26,29 @@
                 Không có dữ liệu hình ảnh cho chapter này.
             </div>
         </div>
-        
-        <div class="sticky left-0 right-0 bottom-0 flex items-center justify-center w-full
+          <!-- Navigation Controls -->
+        <div class="fixed left-0 right-0 top-1/2 transform -translate-y-1/2 flex justify-between px-2 pointer-events-none">
+            <router-link 
+                :disabled="!prevChapter"
+                :to="`/comics/${comicData.slug}/${getIdComic(prevChapter)}`"
+                class="bg-black bg-opacity-50 text-white p-2 rounded-r-lg hover:bg-opacity-70 pointer-events-auto"
+                :class="{'opacity-50 pointer-events-none': !prevChapter}">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </router-link>
+            <router-link 
+                :disabled="!nextChapter"
+                :to="`/comics/${comicData.slug}/${getIdComic(nextChapter)}`"
+                class="bg-black bg-opacity-50 text-white p-2 rounded-l-lg hover:bg-opacity-70 pointer-events-auto"
+                :class="{'opacity-50 pointer-events-none': !nextChapter}">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </router-link>
+        </div>
+
+        <div class="sticky left-0 right-0 bottom-0 flex items-center justify-between w-full
          dark:bg-slate-700 dark:text-white p-4">
             <div class="flex items-center dark:text-white text-gray-800 font-semibold
             dark:bg-slate-950 bg-white px-4 py-2">
@@ -43,10 +64,10 @@
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
                 </svg>
             </button>
-            <div id="dropdownTop" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm lg:w-3/12 w-8/12 dark:bg-gray-700">
-                <ul class="flex">
+            <div id="dropdownTop" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm lg:w-3/12 w-8/12 dark:bg-gray-700">                <ul class="flex">
                     <li v-for="server in listServer"
                         :key="server.id"
+                        @click="switchServer(server)"
                         class="p-2 font-semibold cursor-pointer"
                         :class="{ 
                             'bg-orange-700 text-white': currentServer === server,
@@ -58,17 +79,24 @@
                 <ul 
                 class="py-2 text-sm text-gray-700 dark:text-gray-200
                 flex flex-wrap max-h-72 overflow-y-scroll custom-bar" 
-                aria-labelledby="dropdownTopButton">
-                    <li v-for="chapter in listChapters"
+                aria-labelledby="dropdownTopButton">                    
+                <li v-for="chapter in listChapters"
                     class="p-2 font-semibold cursor-pointer 
                     lg:flex-1/6 flex-1/3 lg:max-w-1/6 max-w-1/3 text-center"
                     :class="{
                         'bg-orange-700 text-white': currentChapter === chapter.chapter_name,
                         'text-gray-900 dark:text-white': currentChapter !== chapter.chapter_name
                     }">
-                        <a class="block" :href="`/comics/${comicData.slug}/${getIdComic(chapter.chapter_api_data)}`">
+                        <router-link class="block w-full h-full" 
+                            :to="{
+                                name: 'DynamicChapter',
+                                params: {
+                                    slug: comicData.slug,
+                                    id: getIdComic(chapter.chapter_api_data)
+                                }
+                            }">
                             {{ chapter.chapter_name }}
-                        </a>
+                        </router-link>
                     </li>
                 </ul>
             </div>
@@ -80,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUpdated } from    'vue';
+import { ref, onMounted, onUpdated, watch } from    'vue';
 import { useRoute }                 from    'vue-router';
 import Loader                       from    '../components/Loader.vue';
 import axios                        from    'axios';
@@ -101,21 +129,24 @@ const listServer                    =       ref([]);
 const listChapters                  =       ref([]);
 const currentServer                 =       ref("");
 const currentChapter                =       ref("");
+const prevChapter                   =       ref(null);
+const nextChapter                   =       ref(null);
 
 
 //setCurrentChapters handler
-const setCurrentChapters        =       async (serverChapters) => {
+const setCurrentChapters            =       async (serverChapters) => {
     try {
-        listChapters.value      =       serverChapters.server_data;
-        currentServer.value     =       serverChapters.server_name;
+        listChapters.value          =       serverChapters.server_data;
+        currentServer.value         =       serverChapters.server_name;
     } catch (error) {
         console.error(error);
     }
 }
 
 //get id from api
-const getIdComic                =        (apiChapter) => {
+const getIdComic                    =        (apiChapter) => {
     try {
+        if(!apiChapter) return null;
         const splitUrl = apiChapter.split("/");
         const idComic = splitUrl[splitUrl.length - 1];
         return idComic; 
@@ -124,12 +155,19 @@ const getIdComic                =        (apiChapter) => {
     }
 }
 
-onMounted(async () => {
+//find adjacent chapters
+const findAdjacentChapters          =       (chapters, currentChapter) => {
+    const currentIndex              =       chapters.findIndex(chapter => chapter.chapter_name === currentChapter);
+    prevChapter.value               =       currentIndex > 0 ? chapters[currentIndex - 1].chapter_api_data : null;
+    nextChapter.value               =       currentIndex < chapters.length - 1 ? chapters[currentIndex + 1].chapter_api_data : null;
+};
+
+// Hàm tải dữ liệu chapter
+const loadChapterData = async (slug, chapterId) => {
     try {
         showLoader.value            =       true;
-        const slug                  =       route.params.slug;
-        const chapterId             =       route.params.id;
         
+        // Lấy dữ liệu truyện và chapter
         const comicResponse         =       await axios.get(`${COMIC_API}/${slug}`);
         const chapterResponse       =       await axios.get(`${READ_API}/${chapterId}`);
         
@@ -138,22 +176,39 @@ onMounted(async () => {
         
         // Cập nhật tiêu đề trang
         document.title              =       `${comicData.value.name} - Chapter ${chapterData.value.chapter_name} | Rury Comics`;
-        showLoader.value            =       false;
 
         //cập nhật danh sách server
         listServer.value            =       comicData.value.chapters.map(server => server.server_name);
         setCurrentChapters(comicData.value.chapters[0]);
-        currentChapter.value       =       chapterData.value.chapter_name;
-        console.log(comicData.value);
-        console.log(chapterData.value);
-        
+        currentChapter.value        =       chapterData.value.chapter_name;
+      
+        // Cuộn trang lên đầu khi chuyển chapter
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        findAdjacentChapters(listChapters.value, currentChapter.value);
+        showLoader.value            =       false;
         // Khởi tạo Flowbite
         initFlowbite();
     } catch (error) {
         console.error('Error loading chapter:', error);
         showLoader.value            =       false;
     }
+};
+
+// Khi component được mount
+onMounted(async () => {
+    // Tải dữ liệu ban đầu
+    await loadChapterData(route.params.slug, route.params.id);
 });
+
+// Theo dõi thay đổi route params
+watch(() => route.params,
+    async (newParams) => {
+        if (newParams.id && newParams.slug) {
+            await loadChapterData(newParams.slug, newParams.id);
+        }
+    },
+    { deep: true }
+);
 
 //cập nhật flowbite
 onUpdated(() => {
