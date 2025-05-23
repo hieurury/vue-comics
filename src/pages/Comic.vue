@@ -66,6 +66,7 @@
                         {{ serverChapters.server_name }}
                     </li>
                 </ul>
+                <h3 v-else class="text-2xl font-bold my-2 text-slate-800 dark:text-white">Hiện tại chưa có chương nào khả dụng!</h3>
                 <!-- danh sách chương -->
                 <ul 
                     v-if="currentChapters && currentChapters.length > 0" 
@@ -113,6 +114,7 @@ const currentServer             =       ref(null);
 //setCurrentChapters handler
 const setCurrentChapters        =       async (serverChapters) => {
     try {
+        if(!serverChapters) return;
         currentChapters.value   =       serverChapters.server_data;
         currentServer.value     =       serverChapters.server_name;
     } catch (error) {
@@ -132,7 +134,7 @@ const getIdComic                =        (apiChapter) => {
 
 onMounted(async () => {
     try {
-        showLoader.value    =       true;
+        // showLoader.value    =       true;
         slugcomic.value     =       useRoute().params.slug;
         const comicRs       =       await axios.get(`${COMIC_API}/${slugcomic.value}`)
         comicData.value     =       comicRs.data.data.item;
