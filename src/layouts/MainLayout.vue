@@ -8,7 +8,7 @@
           to="/"
           class="flex items-center space-x-3 rtl:space-x-reverse"
         >
-          <img src="/img/logo.png" class="h-8" alt="Rury Movies Logo" />
+          <img src="/img/logo.png" class="h-8 rounded-full" alt="Rury Movies Logo" />
           <span
             class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
             >Rury Comics</span
@@ -152,7 +152,7 @@
           <a href="https://flowbite.com/" class="flex items-center">
             <img
               src="/img/logo.png"
-              class="h-8 me-3"
+              class="h-8 me-3 rounded-full"
               alt="FlowBite Logo"
             />
             <span

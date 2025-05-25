@@ -7,29 +7,42 @@
             </svg>
             <h1 class="lg:text-5xl text-3xl font-extrabold text-slate-700">Rury Comics<small class="ms-2 font-semibold text-gray-500 italic">{{ caterogyData.titlePage }}</small></h1>
         </div>
-        <ListComics :list="caterogyData.items" />
+        <ListPage 
+            v-if="caterogyData.params" 
+            :pagination="caterogyData.params.pagination"
+            :key="paginationKey"/>
+        <ListComics 
+        :list="caterogyData.items"/>
+        <ListPage 
+            v-if="caterogyData.params" 
+            :pagination="caterogyData.params.pagination"
+            :key="paginationKey"/>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import axios from 'axios';
 import Loader from '../components/Loader.vue';
 import ListComics from '../components/ListComics.vue';
+import ListPage from '../components/ListPage.vue';
 import { useRoute } from 'vue-router';
 
 const CATEGORY_API = import.meta.env.VITE_CATEGORIES_API;
 
 const caterogyData = ref([]);
+const paginationKey = ref(0);
 //get router
 const showLoader = ref(false);
 
-const loadDataCategory = async (slug) => {
+const loadDataCategory = async (slug, query) => {
     try {
+        console.log(slug,query);
         showLoader.value = true;
-        const comicsRs = await axios.get(`${CATEGORY_API}/${slug}`);
+        const comicsRs = await axios.get(`${CATEGORY_API}/${slug}?page=${query || 1}`);
         caterogyData.value = comicsRs.data.data;
-        console.log(caterogyData.value);
+        paginationKey.value = query || 1;
+        console.log(comicsRs.data.data);
         showLoader.value = false;
     } catch (error) {
         console.error(error);
@@ -38,15 +51,16 @@ const loadDataCategory = async (slug) => {
 }
 
 const router = useRoute();
-
 onMounted(async () => {
-    await loadDataCategory(router.params.slug);
+    console.log(router);
+    await loadDataCategory(router.params.slug, router.query.page);
 })
 
 
-watch(() => router.params, (newParams) => {
-    if (newParams.slug) {
-        loadDataCategory(newParams.slug);
+watch(() => router.query, (newRouter) => {
+    console.log(router.params.slug, newRouter.page);
+    if(newRouter) {
+        loadDataCategory(router.params.slug, newRouter.page);
     }
 
 })
