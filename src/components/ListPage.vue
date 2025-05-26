@@ -53,45 +53,54 @@ const props = defineProps({
     }
 });
 
-const MAX_PAGES = 5;
-const route = useRoute();
+const MAX_PAGES                 = 5;
+const route                     = useRoute();
 
-const totalPages = ref(0);
-const currentPage = ref(1);
-const nextPage = ref(0);
-const previousPage = ref(0);
-const listPages = ref([]);
+const totalPages                = ref(0);
+const currentPage               = ref(1);
+const nextPage                  = ref(0);
+const previousPage              = ref(0);
+const listPages                 = ref([]);
 
 onMounted(() => {
-    totalPages.value = Math.ceil(props.pagination.totalItems / props.pagination.totalItemsPerPage);
-    currentPage.value = props.pagination.currentPage;
+    totalPages.value            = Math.ceil(props.pagination.totalItems / props.pagination.totalItemsPerPage);
+    currentPage.value           = props.pagination.currentPage;
     loadPageControl(currentPage.value, totalPages.value);
-    listPages.value = renderListPages(currentPage.value, totalPages.value);
+    listPages.value             = renderListPages(currentPage.value, totalPages.value);
 });
 
-const loadPageControl = (currentPage, totalPage) => {
+//tải dữ liệu cho các nút tiến và lùi
+const loadPageControl           = (currentPage, totalPage) => {
     if(currentPage > 1) previousPage.value = currentPage - 1;
-    else previousPage.value = 0;
+    else previousPage.value     = 0;
+
     if(currentPage < totalPage) nextPage.value = currentPage + 1;
-    else nextPage.value = 0;
+    else nextPage.value         = 0;
 }
-const renderListPages = (currentPage, totalPage) => {
-    const pages = [];
-    let countPages = MAX_PAGES;
-    const startPage = Math.floor(countPages / 2);
+
+//render ra danh sách các trang
+const renderListPages           = (currentPage, totalPage) => {
+    const pages                 = [];
+    let countPages              = MAX_PAGES;
+    const startPage             = Math.floor(countPages / 2);
+
+    //các trang trước
     for(let i = currentPage - startPage; i <= currentPage - 1; i++) {
         if(i > 0) {
             pages.push(i);
             countPages--;
         }
     }
+
+    //thêm trang hiện tịa vào giữa
     pages.push(currentPage);
     countPages--;
+
+    //các trang sau
     for(let i = currentPage + 1; countPages > 0 && i <= totalPage; i++) {
         pages.push(i);
         countPages--;
     }
-    console.log(pages);
     return pages;
 }
 

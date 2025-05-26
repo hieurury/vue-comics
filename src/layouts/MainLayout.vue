@@ -38,10 +38,11 @@
             />
           </svg>
         </button>
-        <div class="hidden w-full md:block md:w-auto" id="navbar-multi-level">
+        <div class="hidden w-full md:block md:w-auto lg:flex-1" id="navbar-multi-level">
           <ul
-            class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"
+            class="flex flex-col lg:items-center font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"
           >
+          <li class="flex-1 lg:my-0 my-4"><Search/></li>
             <li>
               <router-link
                 to="/"
@@ -127,7 +128,7 @@
                 </svg>
               </router-link>
             </li>
-              <li>       
+              <li class="flex items-center justify-between w-full py-2 px-3 md:p-0 md:w-auto">       
                 <span class="cursor-pointer" v-if="isDarkMode" @click="toggleTheme()">
                   <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                     <path fill-rule="evenodd" d="M13 3a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0V3ZM6.343 4.929A1 1 0 0 0 4.93 6.343l1.414 1.414a1 1 0 0 0 1.414-1.414L6.343 4.929Zm12.728 1.414a1 1 0 0 0-1.414-1.414l-1.414 1.414a1 1 0 0 0 1.414 1.414l1.414-1.414ZM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm-9 4a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H3Zm16 0a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2h-2ZM7.757 17.657a1 1 0 1 0-1.414-1.414l-1.414 1.414a1 1 0 1 0 1.414 1.414l1.414-1.414Zm9.9-1.414a1 1 0 0 0-1.414 1.414l1.414 1.414a1 1 0 0 0 1.414-1.414l-1.414-1.414ZM13 19a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0v-2Z" clip-rule="evenodd"/>
@@ -341,6 +342,7 @@ import {
         initFlowbite 
       }                   from  "flowbite";
 import { useRoute }       from  "vue-router";
+import Search from "../components/Search.vue";
 
 //API
 const   LIST_API          =     import.meta.env.VITE_LIST_API;

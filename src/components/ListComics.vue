@@ -50,15 +50,15 @@
 
 
     //API
-    const IMAGE_API         =       import.meta.env.VITE_IMAGE_API;
+    const IMAGE_API             =       import.meta.env.VITE_IMAGE_API;
     //handler function
-    const checkLatestChapter = (listServer) => {
-        let message = "";
-        let lastChapter = 0;
+    const checkLatestChapter    =       (listServer) => {
+        let message             =       "";
+        let lastChapter         =       0;
         listServer.forEach((item, index) => {
             if (item.chapter_name > lastChapter) {
-                lastChapter = item.chapter_name;
-                message = `${item.chapter_name} chapters #${index + 1}`;
+                lastChapter     =       item.chapter_name;
+                message         =       `${item.chapter_name} chapters #${index + 1}`;
             }
         });
         return message;

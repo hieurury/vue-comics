@@ -122,10 +122,10 @@ const setCurrentChapters        =       async (serverChapters) => {
     }
 }
 //get id from api
-const getIdComic                =        (apiChapter) => {
+const getIdComic                =       (apiChapter) => {
     try {
-        const splitUrl = apiChapter.split("/");
-        const idComic = splitUrl[splitUrl.length - 1];
+        const splitUrl          =       apiChapter.split("/");
+        const idComic           =       splitUrl[splitUrl.length - 1];
         return idComic; 
     } catch (error) {
         console.error(error);
@@ -134,16 +134,15 @@ const getIdComic                =        (apiChapter) => {
 
 onMounted(async () => {
     try {
-        // showLoader.value    =       true;
-        slugcomic.value     =       useRoute().params.slug;
-        const comicRs       =       await axios.get(`${COMIC_API}/${slugcomic.value}`)
-        comicData.value     =       comicRs.data.data.item;
-        showLoader.value    =       false;
+        slugcomic.value         =       useRoute().params.slug;
+        const comicRs           =       await axios.get(`${COMIC_API}/${slugcomic.value}`)
+        comicData.value         =       comicRs.data.data.item;
+        showLoader.value        =       false;
         
         console.log(comicData.value);
         //khi trang được tải xong -> đặt server 1 là mặc định.
         setCurrentChapters(comicData.value.chapters[0]);
-        document.title      =       ` Rury Comics | ${comicData.value.name}`;
+        document.title          =       `Rury Comics | ${comicData.value.name}`;
     } catch (error) {
         console.error(error);
     }
