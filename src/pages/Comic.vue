@@ -88,7 +88,8 @@
 <script setup>
 import {
         ref,
-        onMounted,  
+        onMounted,
+        watch,  
     }                           from    'vue';
 import { useRoute }             from    'vue-router';
 import Loader                   from    '../components/Loader.vue';
@@ -110,6 +111,7 @@ const statusComic               =       ref({
 });
 const currentChapters           =       ref([]);
 const currentServer             =       ref(null);
+const route                     =       useRoute();
 
 //setCurrentChapters handler
 const setCurrentChapters        =       async (serverChapters) => {
@@ -131,10 +133,9 @@ const getIdComic                =       (apiChapter) => {
         console.error(error);
     }
 }
-
-onMounted(async () => {
+const setComicData            =       async (slug) => {
     try {
-        slugcomic.value         =       useRoute().params.slug;
+        slugcomic.value         =       slug;
         const comicRs           =       await axios.get(`${COMIC_API}/${slugcomic.value}`)
         comicData.value         =       comicRs.data.data.item;
         showLoader.value        =       false;
@@ -145,6 +146,16 @@ onMounted(async () => {
         document.title          =       `Rury Comics | ${comicData.value.name}`;
     } catch (error) {
         console.error(error);
+    }
+}
+onMounted(async () => {
+    setComicData(route.params.slug);
+});
+
+watch(() => route.params.slug, (newSlug) => {
+    console.log(route);
+    if(newSlug) {
+        setComicData(newSlug);
     }
 });
 

@@ -30,5 +30,14 @@ onMounted(() => {
 </script>
 
 <style lang="css" scoped>
-
+    .custom-bar::-webkit-scrollbar {
+        width: 2px;
+    }
+    .custom-bar::-webkit-scrollbar-thumb {
+        background-color: #5b5959;
+        border-radius: 5px;
+    }
+    .custom-bar::-webkit-scrollbar-thumb:hover {
+        background-color: #5b5959;
+    }
 </style>
