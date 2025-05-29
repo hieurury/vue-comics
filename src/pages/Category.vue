@@ -44,6 +44,7 @@ const loadDataCategory          = async (slug, query) => {
         showLoader.value        = true;
         const comicsRs          = await axios.get(`${CATEGORY_API}/${slug}?page=${query || 1}`);
         caterogyData.value      = comicsRs.data.data;
+        console.log(caterogyData.value);
         paginationKey.value     = query || 1;
         showLoader.value        = false;
 

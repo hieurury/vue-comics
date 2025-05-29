@@ -59,49 +59,49 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch} from 'vue';
-import axios from 'axios';
-const SEARCH_API = import.meta.env.VITE_SEARCH_API;
-const IMAGE_API = import.meta.env.VITE_IMAGE_API;
-const dataResponse = ref([]);
-const searchQuery = ref('');
-const timeoutState = ref(null);
+import { ref }                  from    'vue';
+import axios                    from    'axios';
+const SEARCH_API                =       import.meta.env.VITE_SEARCH_API;
+const IMAGE_API                 =       import.meta.env.VITE_IMAGE_API;
+const dataResponse              =       ref([]);
+const searchQuery               =       ref('');
+const timeoutState              =       ref(null);
 
-const setSearchQuery = (data) => {
+const setSearchQuery            =       (data) => {
     if(timeoutState.value) {
         clearTimeout(timeoutState.value);
         console.log("clear");
     }
-    timeoutState.value = setTimeout(() => {
-        if(!data) searchQuery.value = undefined;
-        else searchQuery.value = encodeURIComponent(data);
+    timeoutState.value          =       setTimeout(() => {
+        if(!data) 
+            searchQuery.value   =       undefined;
+        else 
+            searchQuery.value   =       encodeURIComponent(data);
         getDataAPI(searchQuery.value);
     }, 500);
 };
 
 const getDataAPI = async (query) => {
     try {
-        const response = await axios.get(`${SEARCH_API}?keyword=${query}`);
-        console.log(query);
-        console.log(response.data);
-        dataResponse.value = response.data.data.items;
+        const response          =       await axios.get(`${SEARCH_API}?keyword=${query}`);
+        dataResponse.value      =       response.data.data.items;
         console.log(dataResponse.value);
     } catch (error) {
         console.log(error);
         
     }
 }
-const checkLatestChapter    =       (listServer) => {
+const checkLatestChapter        =       (listServer) => {
     if(!listServer || listServer.length === 0) {
         return;
     }
-    let message             =       "";
-    let lastChapter         =       0;
+    let message                 =       "";
+    let lastChapter             =       0;
     listServer.forEach((item, index) => {
         if (item.chapter_name > lastChapter) {
-            lastChapter     =       item.chapter_name;
-            message         =       `${item.chapter_name} chapters #${index + 1}`;
+            lastChapter         =       item.chapter_name;
         }
+        message                 =       `${item.chapter_name} chapters #${index + 1}`;
     });
     return message;
 }

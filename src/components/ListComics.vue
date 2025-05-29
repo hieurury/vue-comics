@@ -46,7 +46,7 @@
     import {
             ref, onMounted,
             defineProps,
-        }                           from 'vue';
+        }                       from    'vue';
 
 
     //API
@@ -58,8 +58,8 @@
         listServer.forEach((item, index) => {
             if (item.chapter_name > lastChapter) {
                 lastChapter     =       item.chapter_name;
-                message         =       `${item.chapter_name} chapters #${index + 1}`;
             }
+            message             =       `${item.chapter_name} chapters #${index + 1}`;
         });
         return message;
     }
