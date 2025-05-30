@@ -7,14 +7,18 @@
             }"
             class="dark:text-slate-800 text-white bg-slate-800 flex items-center dark:bg-white
             lg:mx-2 mx-1 lg:py-2 lg:px-4 p-2 hover:bg-slate-700 transistion-all duration-300 rounded-l" 
-            :to="`/categories/${route.params.slug}?page=${previousPage}`
-
-            ">
+            :to="{
+                query: {
+                    comic: props.query.comic,
+                    page: previousPage
+                }
+            }">
             <svg class="w-6 h-6 text-white dark:text-slate-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
             </svg>
         </router-link>
-        <ul class="flex">
+        <ul class="flex"
+        :key="listPages">
             <li v-for="(page, index) in listPages"
                 :key="index"
                 :class="{
@@ -22,7 +26,15 @@
                     'dark:bg-white dark:text-slate-800': page !== currentPage  
                 }"
                 class="lg:mx-2 mx-1 flex items-center hover:bg-slate-700 transistion-all duration-300 rounded" >
-                <router-link class="block w-full h-full lg:py-2 lg:px-4 p-2 px-3" :to="`/categories/${route.params.slug}?page=${page}`">{{ page }}</router-link>
+                <router-link 
+                class="block w-full h-full lg:py-2 lg:px-4 p-2 px-3" 
+                :to="{
+                    query: {
+                        comic: props.query.comic,
+                        page: page
+                    }
+                }"
+                >{{ page }}</router-link>
             </li>
         </ul>
         <!-- cái nút đi tiếp nè -->
@@ -32,9 +44,12 @@
             }"
             class="dark:text-slate-800 text-white bg-slate-800 flex items-center dark:bg-white
             lg:mx-2 mx-1 lg:py-2 lg:px-4 p-2 hover:bg-slate-700 transistion-all duration-300 rounded-r" 
-            :to="`/categories/${route.params.slug}?page=${nextPage}`
-
-            ">
+            :to="{
+                query: {
+                    comic: props.query.comic,
+                    page: nextPage
+                }
+            }">
             <svg class="w-6 h-6 text-white dark:text-slate-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
             </svg>
@@ -43,46 +58,52 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, toRefs, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, 
+        onMounted, 
+        watch, }                from    'vue';
+import { useRoute }             from    'vue-router';
 // Khai báo props trước
-const props = defineProps({
+const props                     =       defineProps({
     pagination: {
         type: Object,
         required: true
+    },
+    query: {
+        type: Object,
+        default: () => ({})
     }
 });
 
-const MAX_PAGES                 = 5;
-const route                     = useRoute();
+const MAX_PAGES                 =       5;
+const route                     =       useRoute();
 
-const totalPages                = ref(0);
-const currentPage               = ref(1);
-const nextPage                  = ref(0);
-const previousPage              = ref(0);
-const listPages                 = ref([]);
+const totalPages                =       ref(0);
+const currentPage               =       ref(1);
+const nextPage                  =       ref(0);
+const previousPage              =       ref(0);
+const listPages                 =       ref([]);
 
 onMounted(() => {
-    totalPages.value            = Math.ceil(props.pagination.totalItems / props.pagination.totalItemsPerPage);
-    currentPage.value           = props.pagination.currentPage;
+    totalPages.value            =       Math.ceil(props.pagination.totalItems / props.pagination.totalItemsPerPage);
+    currentPage.value           =       props.pagination.currentPage;
     loadPageControl(currentPage.value, totalPages.value);
-    listPages.value             = renderListPages(currentPage.value, totalPages.value);
+    listPages.value             =       renderListPages(currentPage.value, totalPages.value);
 });
 
 //tải dữ liệu cho các nút tiến và lùi
-const loadPageControl           = (currentPage, totalPage) => {
+const loadPageControl           =       (currentPage, totalPage) => {
     if(currentPage > 1) previousPage.value = currentPage - 1;
-    else previousPage.value     = 0;
+    else previousPage.value     =       0;
 
     if(currentPage < totalPage) nextPage.value = currentPage + 1;
-    else nextPage.value         = 0;
+    else nextPage.value         =       0;
 }
 
 //render ra danh sách các trang
-const renderListPages           = (currentPage, totalPage) => {
-    const pages                 = [];
-    let countPages              = MAX_PAGES;
-    const startPage             = Math.floor(countPages / 2);
+const renderListPages           =       (currentPage, totalPage) => {
+    const pages                 =       [];
+    let countPages              =       MAX_PAGES;
+    const startPage             =       Math.floor(countPages / 2);
 
     //các trang trước
     for(let i = currentPage - startPage; i <= currentPage - 1; i++) {
@@ -103,6 +124,14 @@ const renderListPages           = (currentPage, totalPage) => {
     }
     return pages;
 }
+
+watch(() => route.query, (newQuery) => {
+    if(newQuery.page) {
+        currentPage.value       =       parseInt(newQuery.page);
+        loadPageControl(currentPage.value, totalPages.value);
+        listPages.value         =       renderListPages(currentPage.value, totalPages.value);
+    }
+}, { immediate: true, deep: true });
 
 
 </script>

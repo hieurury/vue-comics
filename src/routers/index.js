@@ -8,6 +8,7 @@ import  MainLayout           from '../layouts/MainLayout.vue';
 import  ReadLayout           from '../layouts/ReadLayout.vue';
 import  Comic                from '../pages/Comic.vue';
 import  Read                 from '../pages/Read.vue';
+import  SearchPage           from '../pages/SearchPage.vue';
 const routes = [
   {
     path: '/',
@@ -56,6 +57,12 @@ const routes = [
             meta: { layout: ReadLayout }
         }
     ]
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: SearchPage,
+    meta: { layout: MainLayout }
   },
 ];
 

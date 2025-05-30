@@ -9,51 +9,59 @@
         </div>
         <ListPage 
             v-if="caterogyData.params" 
+            :query="{
+                comic: router.query.comic,
+            }"
             :pagination="caterogyData.params.pagination"
-            :key="paginationKey"/>
+            :key="paginationKey"
+        />
         <ListComics 
-        :list="caterogyData.items"/>
+            :list="caterogyData.items"
+        />
         <ListPage 
             v-if="caterogyData.params" 
+            :query="{
+                comic: router.query.comic,
+            }"
             :pagination="caterogyData.params.pagination"
-            :key="paginationKey"/>
+            :key="paginationKey"
+        />
     </div>
 </template>
 
 <script setup>
 import { ref, 
     onMounted, 
-    watch, 
-    computed }                  from 'vue';
-import axios                    from 'axios';
-import Loader                   from '../components/Loader.vue';
-import ListComics               from '../components/ListComics.vue';
-import ListPage                 from '../components/ListPage.vue';
-import { useRoute }             from 'vue-router';
+    watch, }                    from    'vue';
+import axios                    from    'axios';
+import Loader                   from    '../components/Loader.vue';
+import ListComics               from    '../components/ListComics.vue';
+import ListPage                 from    '../components/ListPage.vue';
+import { useRoute }             from    'vue-router';
 
-const CATEGORY_API              = import.meta.env.VITE_CATEGORIES_API;
+const CATEGORY_API              =       import.meta.env.VITE_CATEGORIES_API;
 
-const caterogyData              = ref([]);
-const paginationKey             = ref(0);
+const caterogyData              =       ref([]);
+const paginationKey             =       ref(0);
 //get router
-const showLoader                = ref(false);
+const showLoader                =       ref(false);
 
-const loadDataCategory          = async (slug, query) => {
+const loadDataCategory          =       async (slug, query) => {
     try {
 
-        showLoader.value        = true;
-        const comicsRs          = await axios.get(`${CATEGORY_API}/${slug}?page=${query || 1}`);
-        caterogyData.value      = comicsRs.data.data;
+        showLoader.value        =       true;
+        const comicsRs          =       await axios.get(`${CATEGORY_API}/${slug}?page=${query || 1}`);
+        caterogyData.value      =       comicsRs.data.data;
         console.log(caterogyData.value);
-        paginationKey.value     = query || 1;
-        showLoader.value        = false;
+        paginationKey.value     =       query || 1;
+        showLoader.value        =       false;
 
     } catch (error) {
         console.error(error);
         
     }
 }
-const router                    = useRoute();
+const router                    =       useRoute();
 
 onMounted(async () => {
     await loadDataCategory(router.params.slug, router.query.page);

@@ -133,7 +133,7 @@ const getIdComic                =       (apiChapter) => {
         console.error(error);
     }
 }
-const setComicData            =       async (slug) => {
+const setComicData              =       async (slug) => {
     try {
         slugcomic.value         =       slug;
         const comicRs           =       await axios.get(`${COMIC_API}/${slugcomic.value}`)
